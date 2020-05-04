@@ -22,6 +22,7 @@ règles :
 - une cellule vivante possédant deux ou trois voisines vivantes le reste, sinon elle meurt.
 
 On va utiliser un process par cellule même si un cellule est vivant le process tournera toujours.
+Voir la doc : https://hexdocs.pm/elixir/Process.html#content
 
 ## Au bout de 200ms met à jour mon état en fonction des état réçu
 
