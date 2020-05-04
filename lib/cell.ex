@@ -45,8 +45,11 @@ defmodule Cell do
     cell
   end
 
-  def notify(cell, state) do
-    send(cell, {:state, state})
+  def notify(cell, :alive) do
+    send(cell, {:state, :alive})
+    cell
+  end
+  def notify(cell, :dead) do
     cell
   end
 

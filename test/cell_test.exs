@@ -50,6 +50,20 @@ defmodule CellTest do
     receive_alive()
   end
 
+  test "cell still dead" do
+    Cell.create(:dead)
+    |> Cell.add_neighbour(self())
+
+    receive_no_message()
+  end
+
+  test "cell become dead" do
+    Cell.create(:alive)
+    |> Cell.add_neighbour(self())
+
+    receive_no_message()
+  end
+
   def receive_alive do
     receive do
       {:state, :alive} -> assert true
@@ -59,4 +73,14 @@ defmodule CellTest do
         assert false
     end
   end
+
+  def receive_no_message do
+    receive do
+      wrong_message -> assert :error == wrong_message
+    after
+      1_000 ->
+        assert true
+    end
+  end
+
 end
