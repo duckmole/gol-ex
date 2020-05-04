@@ -4,17 +4,26 @@ defmodule Cell do
 
   """
 
-  def loop() do
-    Process.sleep(1000)
-    loop()
+  def loop(state) do
+    receive do
+      {:state, pid} ->
+        Process.send(pid, {:state, state}, [])
+    after
+      1_000 -> loop(state)
+    end
   end
 
   def create(state) do
-    Process.spawn(fn -> loop() end,[])
+    Process.spawn(fn -> loop(state) end,[])
   end
 
   def state(pid) do
-    :alive
+    :ok = Process.send(pid, {:state, self()}, [])
+    receive do
+      {:state, state} -> state
+    after
+      3_000 -> :error
+    end
   end
 
 end

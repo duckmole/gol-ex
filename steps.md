@@ -36,3 +36,8 @@ Il y a 2 états possibles :
 On doit démarrer un process et revoyer un message sur reception de `state`
 
 `mix new . --module Cell`
+
+Tests
+- Retourner un état
+- Créer un process
+- Retourner l'état avec le process

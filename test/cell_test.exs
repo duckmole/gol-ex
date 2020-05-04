@@ -11,4 +11,9 @@ defmodule CellTest do
     cell_pid = Cell.create(:alive)
     assert Process.alive?(cell_pid)
   end
+
+  test "get state for a dead cell" do
+    cell_pid = Cell.create(:dead)
+    assert Cell.state(cell_pid) == :dead
+  end
 end
