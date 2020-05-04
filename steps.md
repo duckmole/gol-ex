@@ -14,6 +14,7 @@
 ## tests
 
 `mix test`
+`mix format mix.exs "lib/**/*.{ex,exs}" "test/**/*.{ex,exs}"`
 
 # Une cellule
 
@@ -41,3 +42,9 @@ Tests
 - Retourner un état
 - Créer un process
 - Retourner l'état avec le process
+
+### Une cellule peut modifier son état
+
+Au bout de 200ms si une cellule ne recoit rien,
+- elle change d'état en fonction du nombre de cellule vivante dans son voisinage
+- elle prévient son voisionnage de son changement d'état.

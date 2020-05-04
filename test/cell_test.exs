@@ -16,4 +16,18 @@ defmodule CellTest do
     cell_pid = Cell.create(:dead)
     assert Cell.state(cell_pid) == :dead
   end
+
+  test "update cell state for a alive cell" do
+    assert Cell.next_state({:alive, 0}) == :dead
+    assert Cell.next_state({:alive, 2}) == :alive
+    assert Cell.next_state({:alive, 3}) == :alive
+    assert Cell.next_state({:alive, 4}) == :dead
+  end
+
+  test "update cell state for a dead cell" do
+    assert Cell.next_state({:dead, 0}) == :dead
+    assert Cell.next_state({:dead, 2}) == :dead
+    assert Cell.next_state({:dead, 3}) == :alive
+    assert Cell.next_state({:dead, 4}) == :dead
+  end
 end
