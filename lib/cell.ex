@@ -4,20 +4,29 @@ defmodule Cell do
 
   """
 
-  def loop(state) do
+  def loop(state = {dead_or_alive, nb_alive}, neighbours \\ []) do
     receive do
-      {:state, pid} ->
-        Process.send(pid, {:state, state}, [])
+      {:current_state, pid} ->
+        Process.send(pid, {:state, dead_or_alive}, [])
+
+      {:add_neighbour, pid} ->
+        loop(state, [pid | neighbours])
+
+      {:state, :alive} ->
+        loop({dead_or_alive, nb_alive + 1}, neighbours)
     after
-      1_000 -> loop(state)
+      500 ->
+        next_state = next_state(state)
+        Enum.each(neighbours, fn neighbour -> Cell.notify(neighbour, next_state) end)
+        loop({next_state, 0})
     end
   end
 
-  def new_state({:alive, nb_alive}) when nb_alive == 2 or nb_alive == 3 do
+  def next_state({:alive, nb_alive}) when nb_alive == 2 or nb_alive == 3 do
     :alive
   end
 
-  def new_state({:dead, 3}) do
+  def next_state({:dead, 3}) do
     :alive
   end
 
@@ -25,12 +34,24 @@ defmodule Cell do
     :dead
   end
 
+  # interface
+
   def create(state) do
-    Process.spawn(fn -> loop(state) end, [])
+    spawn(fn -> loop({state, 0}) end)
+  end
+
+  def add_neighbour(cell, neighbour) do
+    send(cell, {:add_neighbour, neighbour})
+    cell
+  end
+
+  def notify(cell, state) do
+    send(cell, {:state, state})
+    cell
   end
 
   def state(pid) do
-    :ok = Process.send(pid, {:state, self()}, [])
+    send(pid, {:current_state, self()})
 
     receive do
       {:state, state} -> state

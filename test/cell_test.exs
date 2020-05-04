@@ -30,4 +30,33 @@ defmodule CellTest do
     assert Cell.next_state({:dead, 3}) == :alive
     assert Cell.next_state({:dead, 4}) == :dead
   end
+
+  test "cell still alive" do
+    Cell.create(:alive)
+    |> Cell.add_neighbour(self())
+    |> Cell.notify(:alive)
+    |> Cell.notify(:alive)
+
+    receive_alive()
+  end
+
+  test "cell become alive" do
+    Cell.create(:dead)
+    |> Cell.add_neighbour(self())
+    |> Cell.notify(:alive)
+    |> Cell.notify(:alive)
+    |> Cell.notify(:alive)
+
+    receive_alive()
+  end
+
+  def receive_alive do
+    receive do
+      {:state, :alive} -> assert true
+      wrong_message -> assert :error == wrong_message
+    after
+      1_000 ->
+        assert false
+    end
+  end
 end
